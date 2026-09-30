@@ -1,0 +1,23 @@
+uuid: b5ea5c1b-b517-4c51-9aa0-73d5435c6eea
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_bbb
+    - node.type.bbb_test_kit_room
+  module:
+    - bigbluebutton
+id: node.bbb_test_kit_room.field_bbb
+field_name: field_bbb
+entity_type: node
+bundle: bbb_test_kit_room
+label: 'BigBlueButton meeting'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  field_overrides: {  }
+  fields: {  }
+field_type: bigbluebutton

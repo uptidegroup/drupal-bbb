@@ -1,0 +1,21 @@
+uuid: 409dab6e-85f6-490a-8e9e-12e80d18f46e
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.restricted_html
+    - rest.resource.bigbluebutton_join_meeting_link_rest_resource
+  module:
+    - filter
+    - rest
+    - system
+_core:
+  default_config_hash: Tus1ZTNXKIOnrennR1hnTbc7wUPBXHTUm5UdCpEhJSk
+id: anonymous
+label: 'Anonymous user'
+weight: 0
+is_admin: false
+permissions:
+  - 'access content'
+  - 'restful get bigbluebutton_join_meeting_link_rest_resource'
+  - 'use text format restricted_html'

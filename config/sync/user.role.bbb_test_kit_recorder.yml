@@ -1,0 +1,14 @@
+uuid: 23e3855f-3295-4390-9d80-373acb4b3a51
+langcode: en
+status: true
+dependencies:
+  module:
+    - bigbluebutton
+id: bbb_test_kit_recorder
+label: 'BBB Test Kit: recordings access'
+weight: 7
+is_admin: false
+permissions:
+  - 'access bigbluebutton recording'
+  - 'access bigbluebutton video download'
+  - 'delete bigbluebutton recording'

@@ -1,0 +1,16 @@
+uuid: b914441d-1e37-43a5-a25a-28aa2e1e163d
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.bbb_test_kit_room
+  module:
+    - node
+id: bbb_test_kit_editor
+label: 'BBB Test Kit: editor'
+weight: 5
+is_admin: false
+permissions:
+  - 'access content overview'
+  - 'create bbb_test_kit_room content'
+  - 'edit any bbb_test_kit_room content'

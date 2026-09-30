@@ -1,0 +1,23 @@
+uuid: b5f5b035-a563-41e9-bcbc-6daeadde307b
+langcode: en
+status: true
+dependencies:
+  module:
+    - file
+    - node
+id: node.field_bbb_presentation
+field_name: field_bbb_presentation
+entity_type: node
+type: file
+settings:
+  target_type: file
+  display_field: false
+  display_default: false
+  uri_scheme: public
+module: file
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

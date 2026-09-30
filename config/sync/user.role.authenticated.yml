@@ -1,0 +1,25 @@
+uuid: de37a50d-fc16-499b-99ff-724c7c6f5882
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+    - rest.resource.bigbluebutton_join_meeting_link_rest_resource
+    - rest.resource.bigbluebutton_meeting_info_rest_resource
+  module:
+    - file
+    - filter
+    - rest
+    - system
+_core:
+  default_config_hash: wkW7P5A53YhGmsgamrmTbfwpZrqdnPYiJdoAZQtdmJg
+id: authenticated
+label: 'Authenticated user'
+weight: 1
+is_admin: false
+permissions:
+  - 'access content'
+  - 'delete own files'
+  - 'restful get bigbluebutton_join_meeting_link_rest_resource'
+  - 'restful get bigbluebutton_meeting_info_rest_resource'
+  - 'use text format basic_html'

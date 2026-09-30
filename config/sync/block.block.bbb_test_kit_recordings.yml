@@ -1,0 +1,32 @@
+uuid: 293aedb2-72b0-4797-b021-fb0bb9194745
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.bbb_test_kit_recordings
+  module:
+    - node
+    - views
+  theme:
+    - olivero
+id: bbb_test_kit_recordings
+theme: olivero
+region: content
+weight: 10
+provider: null
+plugin: 'views_block:bbb_test_kit_recordings-block_1'
+settings:
+  id: 'views_block:bbb_test_kit_recordings-block_1'
+  label: 'Meeting recordings'
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: null
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      bbb_test_kit_room: bbb_test_kit_room

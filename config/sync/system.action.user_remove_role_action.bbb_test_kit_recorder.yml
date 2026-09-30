@@ -1,0 +1,14 @@
+uuid: ff25f04c-8237-4e08-a321-ac1ea8f91ac5
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.bbb_test_kit_recorder
+  module:
+    - user
+id: user_remove_role_action.bbb_test_kit_recorder
+label: 'Remove the BBB Test Kit: recordings access role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: bbb_test_kit_recorder

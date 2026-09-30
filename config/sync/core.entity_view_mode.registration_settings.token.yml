@@ -1,0 +1,11 @@
+uuid: e69f30f8-000d-4fa7-bb5e-a907a63a3311
+langcode: en
+status: true
+dependencies:
+  module:
+    - registration
+id: registration_settings.token
+label: Token
+description: null
+targetEntityType: registration_settings
+cache: true

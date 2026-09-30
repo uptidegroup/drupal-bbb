@@ -1,0 +1,12 @@
+uuid: 91afdd91-8747-4987-861f-5165a1b3a1d4
+langcode: en
+status: true
+dependencies:
+  config:
+    - workflows.workflow.registration
+id: bbb_test_kit_guest
+label: 'BBB Test Kit guest invitation'
+workflow: registration
+defaultState: complete
+heldExpireTime: 1
+heldExpireState: canceled

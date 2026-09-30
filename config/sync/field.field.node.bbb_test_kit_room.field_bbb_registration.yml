@@ -1,0 +1,22 @@
+uuid: 6346ff10-1f49-4742-b3eb-8a74b9925210
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_bbb_registration
+    - node.type.bbb_test_kit_room
+  module:
+    - registration
+id: node.bbb_test_kit_room.field_bbb_registration
+field_name: field_bbb_registration
+entity_type: node
+bundle: bbb_test_kit_room
+label: 'Guest registration'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_types: {  }
+field_type: registration

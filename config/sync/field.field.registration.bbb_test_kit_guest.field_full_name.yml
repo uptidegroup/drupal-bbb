@@ -1,0 +1,19 @@
+uuid: 184917fa-a4ef-4f2e-91f5-517abfccfc24
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.registration.field_full_name
+    - registration.type.bbb_test_kit_guest
+id: registration.bbb_test_kit_guest.field_full_name
+field_name: field_full_name
+entity_type: registration
+bundle: bbb_test_kit_guest
+label: 'Full name'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

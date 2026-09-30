@@ -1,0 +1,18 @@
+uuid: 68bec4d3-14df-4983-ad04-ddfb365e9a3d
+langcode: en
+status: true
+dependencies:
+  module:
+    - bigbluebutton
+    - serialization
+    - user
+id: bigbluebutton_join_meeting_link_rest_resource
+plugin_id: bigbluebutton_join_meeting_link_rest_resource
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - cookie

@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * BBB Test Kit: node in the "recordings" view mode.
+ *
+ * Renders only the recordings (field_bbb via the recordings formatter). The
+ * node title is intentionally omitted so the block shows nothing but the
+ * recordings; the containing Views block provides its own label.
+ *
+ * The recordings formatter always emits a field wrapper, but its inner
+ * template outputs nothing when the meeting has no recordings. So render the
+ * field and test whether it produced any visible content; if not, show a
+ * fallback message.
+ */
+#}
+{% set recordings = content.field_bbb|render %}
+<article{{ attributes }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+  {% if recordings|striptags|trim is not empty %}
+    {{ recordings }}
+  {% else %}
+    <p class="bbb-test-kit-no-recordings">{{ 'No recordings yet.'|t }}</p>
+  {% endif %}
+</article>

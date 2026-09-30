@@ -1,0 +1,14 @@
+uuid: 2b09d3ea-1f1a-4c0f-aa06-960bb54e3bf3
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.bbb_test_kit_editor
+  module:
+    - user
+id: user_add_role_action.bbb_test_kit_editor
+label: 'Add the BBB Test Kit: editor role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: bbb_test_kit_editor

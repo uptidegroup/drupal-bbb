@@ -1,0 +1,9 @@
+uuid: c6164c22-0015-4aaa-ac7a-703c3174e5b9
+langcode: en
+status: true
+dependencies: {  }
+id: bbb_test_kit_moderator
+label: 'BBB Test Kit: moderator (via role hook)'
+weight: 4
+is_admin: false
+permissions: {  }

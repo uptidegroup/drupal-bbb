@@ -1,0 +1,24 @@
+uuid: b6dc13c8-fb2a-4ad6-80dc-88a7be5132c0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.bbb_test_kit_room
+  module:
+    - text
+id: node.bbb_test_kit_room.body
+field_name: body
+entity_type: node
+bundle: bbb_test_kit_room
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+  allowed_formats: {  }
+field_type: text_with_summary

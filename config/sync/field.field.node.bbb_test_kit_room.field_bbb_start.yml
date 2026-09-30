@@ -1,0 +1,21 @@
+uuid: 73c98a7d-6023-4a89-bd2c-d8464b845f31
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_bbb_start
+    - node.type.bbb_test_kit_room
+  module:
+    - datetime
+id: node.bbb_test_kit_room.field_bbb_start
+field_name: field_bbb_start
+entity_type: node
+bundle: bbb_test_kit_room
+label: 'Meeting start'
+description: 'Before this time only moderators may join; everyone else sees a countdown.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

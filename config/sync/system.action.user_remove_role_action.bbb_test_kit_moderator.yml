@@ -1,0 +1,14 @@
+uuid: a346f4fc-08c6-491d-8158-536554edcb23
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.bbb_test_kit_moderator
+  module:
+    - user
+id: user_remove_role_action.bbb_test_kit_moderator
+label: 'Remove the BBB Test Kit: moderator (via role hook) role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: bbb_test_kit_moderator

@@ -1,0 +1,27 @@
+uuid: d275ca57-7c41-4700-aca2-d1adb5c51cf6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_bbb_presentation
+    - node.type.bbb_test_kit_room
+  module:
+    - file
+id: node.bbb_test_kit_room.field_bbb_presentation
+field_name: field_bbb_presentation
+entity_type: node
+bundle: bbb_test_kit_room
+label: 'Presentation (PDF)'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: bbb_test_kit
+  file_extensions: pdf
+  max_filesize: ''
+  description_field: false
+field_type: file

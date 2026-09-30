@@ -1,0 +1,11 @@
+uuid: d745d0f3-aff9-44b1-9f01-726844c3674b
+langcode: en
+status: true
+dependencies: {  }
+name: 'BBB Test Kit room'
+type: bbb_test_kit_room
+description: 'A BigBlueButton video conference room (test kit).'
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: false

@@ -1,0 +1,11 @@
+uuid: 4db8cadf-762b-44f1-983d-9d6d7c5f0441
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.recordings
+label: 'BBB recordings'
+description: null
+targetEntityType: node
+cache: true

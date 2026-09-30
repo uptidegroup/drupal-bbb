@@ -1,0 +1,14 @@
+uuid: 499f66c0-e8ad-4c5a-b326-b1a8f9b9b0d8
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.bbb_test_kit_editor
+  module:
+    - user
+id: user_remove_role_action.bbb_test_kit_editor
+label: 'Remove the BBB Test Kit: editor role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: bbb_test_kit_editor

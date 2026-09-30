@@ -1,0 +1,77 @@
+# ==============================================================================
+# Drupal Core & Composer Dependencies
+# ==============================================================================
+/vendor/
+/web/core/
+/docroot/core/
+
+# Contrib modules, themes, and profiles managed via Composer
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+/docroot/modules/contrib/
+/docroot/themes/contrib/
+/docroot/profiles/contrib/
+
+# Third-party libraries / assets
+/web/libraries/
+/docroot/libraries/
+/node_modules/
+
+# ==============================================================================
+# Files & Local Environment Overrides
+# ==============================================================================
+# Uploaded files
+/web/sites/*/files/
+/docroot/sites/*/files/
+/web/sites/*/private/
+/docroot/sites/*/private/
+
+# Local configuration & credentials
+/web/sites/*/settings.local.php
+/docroot/sites/*/settings.local.php
+/web/sites/*/services.local.yml
+/docroot/sites/*/services.local.yml
+/web/sites/*/settings.php
+/docroot/sites/*/settings.php
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# ==============================================================================
+# DDEV Local Setup
+# ==============================================================================
+.ddev/*
+!.ddev/
+!.ddev/config.yaml
+!.ddev/docker-compose.*.yaml
+.ddev/db_snapshots/
+.ddev/import-db/
+.ddev/.downloads/
+
+# ==============================================================================
+# Database Dumps, Archives & Logs
+# ==============================================================================
+*.sql
+*.gz
+*.sql.gz
+*.tar.gz
+*.zip
+*.log
+
+# ==============================================================================
+# IDEs, Editors & System Artifacts
+# ==============================================================================
+.idea/
+.vscode/
+*.swp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Local test-bed backups (not for deployment)
+/composer.json.maintainer-bak
+/backups/
+/backup.sql

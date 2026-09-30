@@ -1,0 +1,289 @@
+<?php
+
+/**
+ * @file
+ * Exercises every extension point of the bigbluebutton module (1.0.x).
+ *
+ * Dev-only. Each hook logs to the "bbb_test_kit" channel, so
+ * /admin/reports/dblog?type[]=bbb_test_kit shows which ones ran, and each one
+ * leaves a visible marker on the BBB room page where it can.
+ *
+ * Covered:
+ * - hook_bigbluebutton_meeting_role_alter() (the module's only own hook).
+ * - hook_form_alter() on the dynamic form IDs bbb_link_form_*,
+ *   bbb_delete_recording_* and bbb_download_recording_*.
+ * - hook_preprocess_HOOK() for all six recording templates.
+ * - A meeting start time (field_bbb_start): before it, the join button is
+ *   hidden behind a countdown for everyone except moderators, and the role
+ *   hook refuses non-moderators on the server (form and REST alike).
+ */
+
+use Drupal\bigbluebutton\Form\BBBDeleteRecordingForm;
+use Drupal\bigbluebutton\Form\BBBDownloadRecordingForm;
+use Drupal\bigbluebutton\Form\BBBLinkForm;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Implements hook_theme().
+ *
+ * Registers this module's template override for a BBB Test Kit room rendered
+ * in the "recordings" view mode. Declaring the 'base hook' as 'node' and a
+ * path in this module lets the theme layer find
+ * templates/node--bbb-test-kit-room--recordings.html.twig here.
+ */
+function bbb_test_kit_theme($existing, $type, $theme, $path) {
+  return [
+    'node__bbb_test_kit_room__recordings' => [
+      'base hook' => 'node',
+      'template' => 'node--bbb-test-kit-room--recordings',
+      'path' => $path . '/templates',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_bigbluebutton_meeting_role_alter().
+ *
+ * - Role bbb_test: always moderator, even without edit access.
+ * - Role bbb_demoted: never moderator (an editor is forced to viewer).
+ * - Before field_bbb_start: only moderators may join (NULL = no join).
+ */
+function bbb_test_kit_bigbluebutton_meeting_role_alter(&$role, EntityInterface $entity, AccountInterface $account) {
+  $original = $role;
+  $roles = $account->getRoles();
+
+  if (in_array('bbb_test_kit_moderator', $roles, TRUE)) {
+    $role = 'moderator';
+  }
+  if (in_array('bbb_test_kit_demoted', $roles, TRUE) && $role === 'moderator') {
+    $role = 'viewer';
+  }
+  // Server-side gate. The hidden button and countdown are only for display.
+  if ($role !== 'moderator' && _bbb_test_kit_seconds_until_start($entity) > 0) {
+    $role = NULL;
+  }
+
+  \Drupal::logger('bbb_test_kit')->notice('meeting_role_alter: @name (uid @uid) on @type @id: @from → @to', [
+    '@name' => $account->getAccountName() ?: 'anonymous',
+    '@uid' => $account->id(),
+    '@type' => $entity->getEntityTypeId(),
+    '@id' => $entity->id(),
+    '@from' => $original ?? 'NULL',
+    '@to' => $role ?? 'NULL',
+  ]);
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * The BBB forms have generated IDs (bbb_link_form_<type>_<id>,
+ * bbb_delete_recording_<n>, ...), so matching on the form ID string is
+ * fragile. Instead identify them by their form object class, which is the
+ * same for every instance on every entity.
+ */
+function bbb_test_kit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form_object = $form_state->getFormObject();
+  $kind = match (TRUE) {
+    $form_object instanceof BBBLinkForm => 'join',
+    $form_object instanceof BBBDeleteRecordingForm => 'delete',
+    $form_object instanceof BBBDownloadRecordingForm => 'download',
+    default => NULL,
+  };
+  if ($kind === NULL) {
+    return;
+  }
+
+  $form['#attributes']['data-bbb-test-kit'] = $kind;
+  $form['bbb_test_kit_marker'] = [
+    '#type' => 'container',
+    '#attributes' => ['class' => ['bbb-test-kit-marker']],
+    '#weight' => 100,
+    'text' => ['#plain_text' => 'bbb_test_kit: form_alter ran on ' . $kind . ' form (' . $form_id . ')'],
+  ];
+  \Drupal::logger('bbb_test_kit')->debug('form_alter: @kind (@form_id)', ['@kind' => $kind, '@form_id' => $form_id]);
+  if ($kind === 'join') {
+    _bbb_test_kit_join_countdown($form);
+  }
+}
+
+/**
+ * Seconds until the room's field_bbb_start, or 0 if none or already past.
+ */
+function _bbb_test_kit_seconds_until_start(EntityInterface $entity): int {
+  if (!$entity instanceof ContentEntityInterface || !$entity->hasField('field_bbb_start') || $entity->get('field_bbb_start')->isEmpty()) {
+    return 0;
+  }
+  $start = $entity->get('field_bbb_start')->date?->getTimestamp() ?? 0;
+  return max(0, $start - \Drupal::time()->getCurrentTime());
+}
+
+/**
+ * Loads the room a join form belongs to (from its own hidden values).
+ */
+function _bbb_test_kit_join_form_entity(array $form): ?ContentEntityInterface {
+  $type = $form['entity_type_id']['#value'] ?? '';
+  $id = $form['entity_id']['#value'] ?? '';
+  if ($type === '' || $id === '' || !\Drupal::entityTypeManager()->hasDefinition($type)) {
+    return NULL;
+  }
+  $entity = \Drupal::entityTypeManager()->getStorage($type)->load($id);
+  return $entity instanceof ContentEntityInterface ? $entity : NULL;
+}
+
+/**
+ * Whether the account would join the room as moderator.
+ *
+ * Same rule as the module: edit access = moderator, then the role hook.
+ */
+function _bbb_test_kit_is_moderator(ContentEntityInterface $entity, AccountInterface $account): bool {
+  $role = $entity->access('update', $account) ? 'moderator' : ($entity->access('view', $account) ? 'viewer' : NULL);
+  \Drupal::moduleHandler()->alter('bigbluebutton_meeting_role', $role, $entity, $account);
+  return $role === 'moderator';
+}
+
+/**
+ * Replaces the join button with a countdown until field_bbb_start.
+ *
+ * Before the start the button is not rendered at all. At zero the script
+ * fetches the form again over Drupal AJAX (JoinButtonController), and this
+ * function decides again with the server's clock.
+ */
+function _bbb_test_kit_join_countdown(array &$form): void {
+  // The join form only has a button when BBB is enabled on the room.
+  if (!isset($form['submit']) || !($entity = _bbb_test_kit_join_form_entity($form))) {
+    return;
+  }
+  // Stable wrapper, so the AJAX response can replace the whole form.
+  $form['#prefix'] = '<div id="bbb-test-kit-join-' . (int) $entity->id() . '">';
+  $form['#suffix'] = '</div>';
+
+  $seconds = _bbb_test_kit_seconds_until_start($entity);
+  if ($seconds === 0) {
+    return;
+  }
+
+  $start = $entity->get('field_bbb_start')->date->getTimestamp();
+  $start_text = \Drupal::service('date.formatter')->format($start, 'long');
+  $form['#attached']['library'][] = 'bbb_test_kit/join_countdown';
+  $form['#validate'][] = '_bbb_test_kit_join_countdown_validate';
+
+  $account = \Drupal::currentUser();
+  if (_bbb_test_kit_is_moderator($entity, $account)) {
+    // Moderators open the room before the participants arrive.
+    $form['bbb_test_kit_countdown'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#attributes' => ['class' => ['bbb-test-kit-countdown']],
+      '#value' => t('The meeting starts on @date. As a moderator you can join now.', ['@date' => $start_text]),
+      '#weight' => -10,
+    ];
+    return;
+  }
+
+  // Keep the query string (e.g. ?registration=<uuid>) for the AJAX request.
+  $request = \Drupal::request();
+  $query = array_diff_key($request->query->all(), array_flip(['_wrapper_format', 'ajax_form', '_wrapper']));
+  $attributes = [
+    'class' => ['bbb-test-kit-countdown'],
+    'data-bbb-test-kit-start' => (string) $start,
+    'data-bbb-test-kit-url' => \Drupal\Core\Url::fromRoute('bbb_test_kit.join_button', ['node' => $entity->id()], ['query' => $query])->toString(),
+    'aria-live' => 'polite',
+  ];
+  // In an AJAX response the server clock is fresh (never page-cached), so
+  // the script counts these seconds instead of trusting the visitor's clock.
+  if (\Drupal::routeMatch()->getRouteName() === 'bbb_test_kit.join_button') {
+    $attributes['data-bbb-test-kit-seconds'] = (string) $seconds;
+  }
+
+  $form['bbb_test_kit_countdown'] = [
+    '#type' => 'html_tag',
+    '#tag' => 'p',
+    '#attributes' => $attributes,
+    // Text for visitors without JavaScript; the script replaces it.
+    '#value' => t('The meeting starts on @date. Reload the page then to join.', ['@date' => $start_text]),
+    '#weight' => -10,
+  ];
+  // Not rendered at all before the start: nothing to reveal in the browser.
+  $form['submit']['#access'] = FALSE;
+}
+
+/**
+ * Validation for the join form: explain an early join instead of failing.
+ */
+function _bbb_test_kit_join_countdown_validate(array &$form, FormStateInterface $form_state): void {
+  $entity = _bbb_test_kit_join_form_entity($form);
+  if (!$entity || _bbb_test_kit_is_moderator($entity, \Drupal::currentUser())) {
+    return;
+  }
+  if (_bbb_test_kit_seconds_until_start($entity) > 0) {
+    $start = $entity->get('field_bbb_start')->date->getTimestamp();
+    $form_state->setErrorByName('', t('The meeting has not started yet. You can join from @date.', [
+      '@date' => \Drupal::service('date.formatter')->format($start, 'long'),
+    ]));
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for bbb_recordings_links.
+ */
+function bbb_test_kit_preprocess_bbb_recordings_links(array &$variables) {
+  _bbb_test_kit_mark_recordings($variables, 'bbb_recordings_links');
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for bbb_recordings_thumbnails.
+ */
+function bbb_test_kit_preprocess_bbb_recordings_thumbnails(array &$variables) {
+  _bbb_test_kit_mark_recordings($variables, 'bbb_recordings_thumbnails');
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for bbb_recordings_video.
+ */
+function bbb_test_kit_preprocess_bbb_recordings_video(array &$variables) {
+  _bbb_test_kit_mark_recordings($variables, 'bbb_recordings_video');
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for bbb_recordings_download_only.
+ */
+function bbb_test_kit_preprocess_bbb_recordings_download_only(array &$variables) {
+  _bbb_test_kit_mark_recordings($variables, 'bbb_recordings_download_only');
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for bbb_recordings_video_video.
+ *
+ * Rendered by /bigbluebutton/{uuid}/view_recording/{id} for video formats.
+ */
+function bbb_test_kit_preprocess_bbb_recordings_video_video(array &$variables) {
+  \Drupal::logger('bbb_test_kit')->debug('preprocess: bbb_recordings_video_video');
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for bbb_recordings_video_iframe.
+ *
+ * Rendered by /bigbluebutton/{uuid}/view_recording/{id} for presentations.
+ */
+function bbb_test_kit_preprocess_bbb_recordings_video_iframe(array &$variables) {
+  \Drupal::logger('bbb_test_kit')->debug('preprocess: bbb_recordings_video_iframe');
+}
+
+/**
+ * Appends a marker to each recording date so the preprocess hook is visible.
+ */
+function _bbb_test_kit_mark_recordings(array &$variables, string $hook): void {
+  foreach ($variables['recordings'] ?? [] as $delta => $recording) {
+    if (is_array($recording) && is_string($recording['recording_date'] ?? NULL)) {
+      $variables['recordings'][$delta]['recording_date'] .= ' · bbb_test_kit';
+    }
+  }
+  \Drupal::logger('bbb_test_kit')->debug('preprocess: @hook (@count recordings)', [
+    '@hook' => $hook,
+    '@count' => count($variables['recordings'] ?? []),
+  ]);
+}
+

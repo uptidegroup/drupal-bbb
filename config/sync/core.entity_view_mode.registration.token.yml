@@ -1,0 +1,11 @@
+uuid: 95a0395c-95ed-4ea1-9fa4-e6e3b80be315
+langcode: en
+status: true
+dependencies:
+  module:
+    - registration
+id: registration.token
+label: Token
+description: null
+targetEntityType: registration
+cache: true

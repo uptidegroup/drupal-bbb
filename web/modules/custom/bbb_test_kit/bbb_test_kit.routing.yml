@@ -1,0 +1,45 @@
+bbb_test_kit.feedback:
+  path: '/bbb-test-kit-feedback/{node}'
+  defaults:
+    _form: '\Drupal\bbb_test_kit\Form\FeedbackForm'
+    _title_callback: '\Drupal\bbb_test_kit\Form\FeedbackForm::title'
+  requirements:
+    # Everyone who can see the room, guests included.
+    _entity_access: 'node.view'
+    node: '\d+'
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+bbb_test_kit.join_button:
+  path: '/bbb-test-kit/join-button/{node}'
+  defaults:
+    _controller: '\Drupal\bbb_test_kit\Controller\JoinButtonController::button'
+  methods: [GET, POST]
+  requirements:
+    _entity_access: 'node.view'
+    node: '\d+'
+  options:
+    no_cache: TRUE
+    parameters:
+      node:
+        type: entity:node
+
+bbb_test_kit.test_report:
+  path: '/admin/reports/bbb-test-kit'
+  defaults:
+    _controller: '\Drupal\bbb_test_kit\Controller\TestReportController::report'
+    _title: 'BBB Test Kit results'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    no_cache: TRUE
+
+bbb_test_kit.feedback_report:
+  path: '/admin/reports/bbb-test-kit-feedback'
+  defaults:
+    _controller: '\Drupal\bbb_test_kit\Controller\FeedbackReportController::list'
+    _title: 'BBB room feedback'
+  requirements:
+    _permission: 'access site reports'

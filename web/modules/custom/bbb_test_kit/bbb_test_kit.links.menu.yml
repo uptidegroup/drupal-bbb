@@ -1,0 +1,11 @@
+bbb_test_kit.test_report:
+  title: 'BBB Test Kit results'
+  description: 'Run every BBB Test Kit check and see pass/fail.'
+  route_name: bbb_test_kit.test_report
+  parent: system.admin_reports
+
+bbb_test_kit.feedback_report:
+  title: 'BBB room feedback'
+  description: 'Feedback participants left after BigBlueButton meetings.'
+  route_name: bbb_test_kit.feedback_report
+  parent: system.admin_reports

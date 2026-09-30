@@ -1,0 +1,14 @@
+join_countdown:
+  version: 1.1
+  js:
+    js/join-countdown.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupal.ajax
+    - core/once
+
+report:
+  version: 1.0
+  css:
+    theme:
+      css/report.css: {}

@@ -1,0 +1,36 @@
+uuid: 8d44e797-f1f0-4d8d-844b-81c08662470f
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.recordings
+    - field.field.node.bbb_test_kit_room.body
+    - field.field.node.bbb_test_kit_room.field_bbb
+    - field.field.node.bbb_test_kit_room.field_bbb_presentation
+    - field.field.node.bbb_test_kit_room.field_bbb_registration
+    - field.field.node.bbb_test_kit_room.field_bbb_start
+    - node.type.bbb_test_kit_room
+  module:
+    - bigbluebutton
+    - user
+id: node.bbb_test_kit_room.recordings
+targetEntityType: node
+bundle: bbb_test_kit_room
+mode: recordings
+content:
+  field_bbb:
+    type: bigbluebutton_recordings
+    label: hidden
+    settings:
+      display_options: links
+      supported_formats:
+        video: video
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  field_bbb_presentation: true
+  field_bbb_registration: true
+  field_bbb_start: true
+  links: true

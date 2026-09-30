@@ -1,0 +1,13 @@
+name: 'BigBlueButton Test Kit'
+type: module
+description: 'Sets up a full BigBlueButton test fixture (node type, fields, users, registrations, REST) and exercises every extension point. Test/dev sites only.'
+package: Testing
+# 10.3 is the floor of the Token and Registration dependencies.
+core_version_requirement: ^10.3 || ^11
+dependencies:
+  - drupal:block
+  - drupal:views
+  - bigbluebutton:bigbluebutton
+  - registration:registration
+  - token:token
+  - restui:restui

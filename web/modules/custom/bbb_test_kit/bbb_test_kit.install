@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the bbb_test_kit module.
+ */
+
+use Drupal\bbb_test_kit\TestKitInstaller;
+
+/**
+ * Implements hook_requirements().
+ *
+ * Blocks installation when the environment can't run the kit, and reports
+ * status at runtime.
+ */
+function bbb_test_kit_requirements(string $phase): array {
+  $requirements = [];
+
+  if ($phase === 'install') {
+    if (version_compare(PHP_VERSION, '8.2.0', '<')) {
+      $requirements['bbb_test_kit_php'] = [
+        'title' => 'BigBlueButton Test Kit',
+        'description' => t('PHP 8.2 or newer is required (running @v).', ['@v' => PHP_VERSION]),
+        'severity' => REQUIREMENT_ERROR,
+      ];
+    }
+    return $requirements;
+  }
+
+  if ($phase === 'runtime') {
+    $config = \Drupal::config('bigbluebutton.settings');
+    $configured = $config->get('hostname') && $config->get('secret');
+    $requirements['bbb_test_kit_bbb'] = [
+      'title' => 'BigBlueButton Test Kit',
+      'value' => $configured
+        ? t('Configured')
+        : t('No BBB host/secret set'),
+      'description' => $configured
+        ? t('Test users share the password shown by <code>drush bbb-test:info</code>.')
+        : t('Set a BBB host and secret at <a href=":url">BBB settings</a> to run the live tests.', [
+          ':url' => \Drupal\Core\Url::fromRoute('bigbluebutton.settings')->toString(),
+        ]),
+      'severity' => $configured ? REQUIREMENT_OK : REQUIREMENT_WARNING,
+    ];
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_install().
+ *
+ * Builds the whole test fixture through the entity API (no config/install),
+ * so it installs identically on Drupal 10.3+ and Drupal 11.
+ */
+function bbb_test_kit_install(): void {
+  foreach ((new TestKitInstaller())->build() as $line) {
+    \Drupal::messenger()->addStatus($line);
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function bbb_test_kit_uninstall(): void {
+  (new TestKitInstaller())->tearDown();
+}
+
+/**
+ * Implements hook_schema().
+ */
+function bbb_test_kit_schema() {
+  $schema['bbb_test_kit_feedback'] = [
+    'description' => 'Feedback left on /bbb-test-kit-feedback/{node} after a BBB meeting.',
+    'fields' => [
+      'id' => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'nid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'description' => 'The BBB room node.'],
+      'uid' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0, 'description' => '0 for guests.'],
+      'name' => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => '', 'description' => 'Guest name.'],
+      'mail' => ['type' => 'varchar', 'length' => 254, 'not null' => TRUE, 'default' => '', 'description' => 'Guest email.'],
+      'rating' => ['type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => TRUE],
+      'comment' => ['type' => 'text', 'size' => 'normal', 'not null' => FALSE],
+      'created' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['id'],
+    'indexes' => ['nid' => ['nid'], 'created' => ['created']],
+  ];
+  return $schema;
+}
+
+/**
+ * Create the bbb_test_kit_feedback table.
+ */
+function bbb_test_kit_update_10001() {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('bbb_test_kit_feedback')) {
+    $schema->createTable('bbb_test_kit_feedback', bbb_test_kit_schema()['bbb_test_kit_feedback']);
+  }
+}

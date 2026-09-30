@@ -1,0 +1,13 @@
+_core:
+  default_config_hash: KEfEDVpLijeFmOFLrlo2myL3-E3KCDk54dGuBlDUJY8
+set_and_forget: false
+broadcast_filter: true
+lenient_access_check: false
+limit_field_values: false
+hide_filter: 10
+queue_notifications: 50
+html_email: false
+prevent_edit_disabled: true
+replace_from_header: false
+sync_registration_settings: true
+sync_registration_settings_all_fields: false

@@ -1,0 +1,29 @@
+# Keep the build context small; Composer repopulates dependencies in-image.
+.git
+.ddev
+.github
+vendor
+web/core
+web/modules/contrib
+web/themes/contrib
+web/profiles/contrib
+web/libraries
+node_modules
+
+# Runtime / local-only
+web/sites/*/files
+web/sites/*/settings.local.php
+web/sites/*/services.local.yml
+
+# Dumps, archives, backups, editor/OS cruft
+backup.sql
+backups
+composer.json.maintainer-bak
+*.sql
+*.sql.gz
+*.tar.gz
+*.zip
+*.log
+.idea
+.vscode
+.DS_Store

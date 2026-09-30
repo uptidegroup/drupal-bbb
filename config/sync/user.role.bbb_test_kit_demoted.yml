@@ -1,0 +1,9 @@
+uuid: 39e8d8ef-8606-4aee-a896-2d046845a3bb
+langcode: en
+status: true
+dependencies: {  }
+id: bbb_test_kit_demoted
+label: 'BBB Test Kit: demoted (never moderator)'
+weight: 6
+is_admin: false
+permissions: {  }

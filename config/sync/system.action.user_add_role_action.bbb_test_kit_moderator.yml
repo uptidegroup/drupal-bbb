@@ -1,0 +1,14 @@
+uuid: 62749843-cd9b-45d6-afa3-a95aaf77de83
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.bbb_test_kit_moderator
+  module:
+    - user
+id: user_add_role_action.bbb_test_kit_moderator
+label: 'Add the BBB Test Kit: moderator (via role hook) role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: bbb_test_kit_moderator

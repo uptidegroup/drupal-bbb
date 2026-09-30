@@ -1,0 +1,14 @@
+uuid: 8e6c2025-7557-4e80-b232-9f6cc1c1ed22
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.bbb_test_kit_recorder
+  module:
+    - user
+id: user_add_role_action.bbb_test_kit_recorder
+label: 'Add the BBB Test Kit: recordings access role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: bbb_test_kit_recorder

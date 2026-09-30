@@ -1,0 +1,3 @@
+hostname: ''
+secret: ''
+user_display_name: '[registration:field_full_name][user:display-name]'

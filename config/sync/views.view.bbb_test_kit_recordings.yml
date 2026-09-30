@@ -1,0 +1,123 @@
+uuid: 0e5b87e1-1e37-4918-9412-8b651a1a4b35
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.recordings
+    - node.type.bbb_test_kit_room
+  module:
+    - node
+    - user
+id: bbb_test_kit_recordings
+label: 'BBB Test Kit recordings'
+module: views
+description: 'Recordings of a BBB Test Kit room, rendered in the recordings view mode.'
+tag: ''
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Meeting recordings'
+      fields: {  }
+      pager:
+        type: none
+        options:
+          offset: 0
+      exposed_form:
+        type: basic
+        options: {  }
+      access:
+        type: perm
+        options:
+          perm: 'access bigbluebutton recording'
+      cache:
+        type: none
+        options: {  }
+      arguments:
+        nid:
+          id: nid
+          table: node_field_data
+          field: nid
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
+          default_action: default
+          exception:
+            value: all
+            title_enable: false
+            title: All
+          default_argument_type: node
+          default_argument_options: {  }
+          specify_validation: true
+          validate:
+            type: 'entity:node'
+            fail: empty
+          validate_options:
+            bundles:
+              bbb_test_kit_room: bbb_test_kit_room
+            access: false
+            operation: view
+            multiple: 0
+          break_phrase: false
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            bbb_test_kit_room: bbb_test_kit_room
+      style:
+        type: default
+        options:
+          row_class: ''
+          default_row_class: true
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: recordings
+      query:
+        type: views_query
+        options:
+          disable_sql_rewrite: false
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  block_1:
+    id: block_1
+    display_title: 'Recordings block'
+    display_plugin: block
+    position: 1
+    display_options:
+      display_extenders: {  }
+      block_description: 'BBB Test Kit: meeting recordings'
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

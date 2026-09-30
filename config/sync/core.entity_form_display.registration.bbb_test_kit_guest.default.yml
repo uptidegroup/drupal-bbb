@@ -1,0 +1,62 @@
+uuid: 189c19f0-386a-4a3e-8869-13130c3caada
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.registration.bbb_test_kit_guest.field_full_name
+    - registration.type.bbb_test_kit_guest
+  module:
+    - registration
+id: registration.bbb_test_kit_guest.default
+targetEntityType: registration
+bundle: bbb_test_kit_guest
+mode: default
+content:
+  anon_mail:
+    type: email_default
+    weight: 0
+    region: content
+    settings:
+      placeholder: ''
+      size: 60
+    third_party_settings: {  }
+  count:
+    type: registration_spaces_default
+    weight: 2
+    region: content
+    settings:
+      hide_single_space: true
+      placeholder: ''
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_full_name:
+    type: string_textfield
+    weight: -10
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  state:
+    type: registration_state_default
+    weight: 3
+    region: content
+    settings:
+      hide_single_state: true
+    third_party_settings: {  }
+  user_uid:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }
