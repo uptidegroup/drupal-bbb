@@ -40,6 +40,19 @@ if ($database_url = getenv('DATABASE_URL')) {
   ];
 }
 
+// TLS for the database connection. Northflank's MySQL addon (when deployed with
+// TLS) sets require_secure_transport=ON, so the client must connect encrypted.
+// Set DB_SSL=true to enable it. Provide DB_SSL_CA (a path to the CA cert) to
+// verify the server certificate; without it the connection is still encrypted
+// but the certificate is not verified, which is enough to satisfy the server.
+if (in_array(strtolower((string) getenv('DB_SSL')), ['1', 'true', 'yes'], TRUE)) {
+  $ca = getenv('DB_SSL_CA') ?: '/etc/ssl/certs/ca-certificates.crt';
+  $databases['default']['default']['pdo'][PDO::MYSQL_ATTR_SSL_CA] = $ca;
+  if (!getenv('DB_SSL_CA')) {
+    $databases['default']['default']['pdo'][PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = FALSE;
+  }
+}
+
 // Required security salt.
 $settings['hash_salt'] = getenv('HASH_SALT') ?: '';
 
